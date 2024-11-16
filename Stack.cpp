@@ -32,7 +32,7 @@ int main()
     Stack stk = {};
 
 
-    StackConstructor(&stk, 10);
+    StackConstructor(&stk, 4);
     StackDump(&stk);
 
     StackPush(&stk, 100);
@@ -44,7 +44,7 @@ int main()
     StackPush(&stk, 300);
     StackDump(&stk);
 
-    StackPop(&stk);
+    StackPush(&stk, 400);
     StackDump(&stk);
 
     StackPop(&stk);
@@ -56,7 +56,10 @@ int main()
     StackPop(&stk);
     StackDump(&stk);
 
-    for (size_t i = 0; i < stk.size; i++)
+    StackPop(&stk);
+    StackDump(&stk);
+
+    for (size_t i = 1; i < stk.size + 1; i++)
     {
         printf("%lg ", stk.data[i]);
     }
@@ -70,7 +73,7 @@ int main()
 
 int StackConstructor(Stack *stk, size_t capacity)
 {
-    stk->data = (StackElem*) calloc(capacity, sizeof(StackElem));
+    stk->data = (StackElem*) calloc(capacity + 2, sizeof(StackElem));
 
     if (stk->data == NULL)
     {
@@ -79,6 +82,9 @@ int StackConstructor(Stack *stk, size_t capacity)
 
     stk->size = 0;
     stk->capacity = capacity;
+
+    stk->data[0] = 0xDEAD;
+    stk->data[capacity + 1] = 0xBAD;
 
     return 0;
 
@@ -111,7 +117,7 @@ void StackDump(Stack *stk)
 
     if (stk->data != NULL)
     {
-        for (size_t i = 0; i < stk->size; i++)
+        for (size_t i = 0; i < stk->size + 1; i++)
         {
             fprintf(fp, "stk->data[%d] = %lg\n", i, stk->data[i]);
         }
@@ -137,6 +143,14 @@ void StackDump(Stack *stk)
 
 int StackCheck(Stack *stk)
 {
+    FILE *fp;
+
+    if ((fp = fopen("dump.txt", "a+")) == NULL)
+    {
+        fprintf(stdout, "Не удается открыть файл \"dump.txt\".\n") ;
+        exit(EXIT_FAILURE);
+    }
+
     if (stk == NULL)
     {
         return Efault;
@@ -147,7 +161,7 @@ int StackCheck(Stack *stk)
         return Efault;
     }
 
-    if (stk->capacity < stk->size || stk->size < 0 || stk->capacity < 0)
+    if (stk->capacity - 1 < stk->size || stk->size < 0 || stk->capacity < 2)
     {
         return Enomem;
     }
@@ -171,15 +185,15 @@ int StackPush(Stack *stk, StackElem value)
 {
     Verificator(stk);
 
-    if (stk->size > stk->capacity)
+    if (stk->size > stk->capacity - 2)
     {
-        stk->capacity = stk->size;
+        stk->capacity = stk->size + 2;
 
-        stk->data = (StackElem*) realloc(stk->data, stk->capacity);
+        stk->data = (StackElem*) realloc(stk->data, stk->capacity * sizeof(StackElem));
 
     }
 
-    stk->data[stk->size] = value;
+    stk->data[stk->size + 1] = value;
 
     stk->size++;
 
@@ -193,7 +207,7 @@ int StackPop(Stack *stk)
 {
     Verificator(stk);
 
-    if (stk->size <= 0)
+    if (stk->size <= 1)
     {
         return Enomem;
     }
