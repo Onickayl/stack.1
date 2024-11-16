@@ -1,0 +1,38 @@
+
+size = 0
+capacity = 10
+
+stk->data[0] = 100
+size = 1
+capacity = 10
+
+stk->data[0] = 100
+stk->data[1] = 200
+size = 2
+capacity = 10
+
+stk->data[0] = 100
+stk->data[1] = 200
+stk->data[2] = 300
+size = 3
+capacity = 10
+
+stk->data[0] = 100
+stk->data[1] = 200
+size = 2
+capacity = 10
+
+stk->data[0] = 100
+size = 1
+capacity = 10
+
+size = 0
+capacity = 10
+
+size = 0
+capacity = 10
+
+Нулевой указатель
+size = -1
+capacity = -1
+
